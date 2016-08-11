@@ -10,31 +10,37 @@ import SpriteKit
 
 class GameScene: SKScene {
     
-    /* UI Connections */
     var increaseButton: MSButtonNode!
     var decreaseButton: MSButtonNode!
     var submitButton: MSButtonNode!
+    var score = 0
+    var scoreLabel: SKLabelNode!
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         
+        scoreLabel = self.childNodeWithName("scoreLabel") as! SKLabelNode
+        self.scoreLabel.text = "Score: \(self.score)"
+        
         /* Set UI connections */
-        increaseButton = self.childNodeWithName("backButton") as! MSButtonNode
+        increaseButton = self.childNodeWithName("increaseButton") as! MSButtonNode
         
         /* Setup restart button selection handler */
         increaseButton.selectedHandler = {
-            
+            self.score+=1
+            self.scoreLabel.text = "Score: \(self.score)"
         }
         
         /* Set UI connections */
-        decreaseButton = self.childNodeWithName("backButton") as! MSButtonNode
+        decreaseButton = self.childNodeWithName("decreaseButton") as! MSButtonNode
         
         /* Setup restart button selection handler */
         decreaseButton.selectedHandler = {
-            
+            self.score-=1
+            self.scoreLabel.text = "Score: \(self.score)"
         }
         
-        submitButton = self.childNodeWithName("backButton") as! MSButtonNode
+        submitButton = self.childNodeWithName("submitButton") as! MSButtonNode
         
         submitButton.selectedHandler = {
             
