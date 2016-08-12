@@ -16,6 +16,9 @@ class GameScene: SKScene {
     var score = 0
     var scoreLabel: SKLabelNode!
     
+    /* Short form access to singleton */
+    let gameManager = GameManager.sharedInstance
+    
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         

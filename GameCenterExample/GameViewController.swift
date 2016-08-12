@@ -8,11 +8,19 @@
 
 import UIKit
 import SpriteKit
+import GameKit
 
 class GameViewController: UIViewController {
+    
+    /* Short form access to singleton */
+    let gameManager = GameManager.sharedInstance
+    
+    var _leaderboardID = "testLeaderboard"
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        authenticateLocalPlayer()
 
         if let scene = GameScene(fileNamed:"GameScene") {
             // Configure the view.
@@ -50,4 +58,31 @@ class GameViewController: UIViewController {
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
+    
+    func authenticateLocalPlayer() {
+        let localPlayer = GKLocalPlayer.localPlayer()
+        
+        localPlayer.authenticateHandler = {
+            viewController, error in
+            if viewController != nil {
+                self.presentViewController(viewController!, animated: true, completion: nil)
+            } else {
+                if GKLocalPlayer.localPlayer().authenticated {
+                    self.gameManager.gameCenterEnabled = true
+                    
+                    GKLocalPlayer.localPlayer().loadDefaultLeaderboardIdentifierWithCompletionHandler({
+                        leaderboardID, error in
+                        if error != nil {
+                            print("\(error!.localizedDescription)")
+                        } else {
+                            self._leaderboardID = leaderboardID!
+                        }
+                    })
+                } else {
+                    self.gameManager.gameCenterEnabled = false
+                }
+            }
+        }
+    }
+    
 }
