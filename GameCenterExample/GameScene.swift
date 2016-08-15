@@ -7,12 +7,14 @@
 //
 
 import SpriteKit
+import GameKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, GKGameCenterControllerDelegate {
     
     var increaseButton: MSButtonNode!
     var decreaseButton: MSButtonNode!
     var submitButton: MSButtonNode!
+    var gameCenterButtton: MSButtonNode!
     var score = 0
     var scoreLabel: SKLabelNode!
     
@@ -46,7 +48,13 @@ class GameScene: SKScene {
         submitButton = self.childNodeWithName("submitButton") as! MSButtonNode
         
         submitButton.selectedHandler = {
-            
+            self.reportScore(self.score)
+        }
+        
+        gameCenterButtton = self.childNodeWithName("gameCenterButton") as! MSButtonNode
+        
+        gameCenterButtton.selectedHandler = {
+            self.showLeader()
         }
     }
     
@@ -56,5 +64,29 @@ class GameScene: SKScene {
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+    }
+    
+    //shows leaderboard screen
+    func showLeader() {
+        let viewControllerVar = self.view?.window?.rootViewController
+        let gKGCViewController = GKGameCenterViewController()
+        gKGCViewController.gameCenterDelegate = self
+        viewControllerVar?.presentViewController(gKGCViewController, animated: true, completion: nil)
+    }
+    func gameCenterViewControllerDidFinish(gameCenterViewController: GKGameCenterViewController) {
+        gameCenterViewController.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func reportScore(duration: Int) {
+        if !gameManager.gameCenterEnabled {
+            return
+        }
+        
+        let score = GKScore(leaderboardIdentifier: "testLeaderboard")
+        score.value = Int64(duration)
+        
+        GKScore.reportScores([score], withCompletionHandler: {
+            error -> Void in
+        })
     }
 }
